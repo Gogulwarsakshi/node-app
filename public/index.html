@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My WSL App</title>
+</head>
+<body>
+  <h1>Frontend Page</h1>
+
+  <!-- Old button -->
+  <button onclick="getData()">Get Message</button>
+  <p id="output"></p>
+
+  <hr>
+
+  <!-- NEW DATABASE PART -->
+  <input type="text" id="name" placeholder="Enter name">
+  <button onclick="addUser()">Add User</button>
+  <button onclick="showUsers()">Show Users</button>
+  <ul id="list"></ul>
+
+  <script>
+    function getData() {
+      fetch('/api/message')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('output').innerText = data.text;
+        });
+    }
+
+    function addUser() {
+      fetch('/add-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: document.getElementById('name').value })
+      }).then(res => res.text()).then(alert);
+    }
+
+    function showUsers() {
+      fetch('/users')
+        .then(res => res.json())
+        .then(data => {
+          const list = document.getElementById('list');
+          list.innerHTML = '';
+          data.forEach(u => {
+            list.innerHTML += `<li>${u.name}</li>`;
+          });
+        });
+    }
+  </script>
+</body>
+</html>
