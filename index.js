@@ -1,22 +1,15 @@
 const express = require('express');
 const mysql = require('mysql2');
-const url = require('url');
+const path = require('path');
 
 const app = express();
+
 app.use(express.json());
 app.use(express.static('public'));
 
 
-// ================= DB CONNECTION =================
-const dbUrl = url.parse(process.env.MYSQL_URL);
-
-const db = mysql.createConnection({
-  host: dbUrl.hostname,
-  user: dbUrl.auth.split(':')[0],
-  password: dbUrl.auth.split(':')[1],
-  database: dbUrl.pathname.replace('/', ''),
-  port: dbUrl.port
-});
+// ================= DATABASE =================
+const db = mysql.createConnection(process.env.MYSQL_URL);
 
 db.connect(err => {
   if (err) {
@@ -29,7 +22,7 @@ db.connect(err => {
 
 // ================= HOME PAGE =================
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 
@@ -68,8 +61,7 @@ app.get('/users', (req, res) => {
 
 
 // ================= SERVER START =================
-const PORT = process.env.PORT || 3000;
-
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
